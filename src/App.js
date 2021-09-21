@@ -1,13 +1,15 @@
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import ImageList from '@mui/material/ImageList';
 import axios from 'axios';
 import React, { useEffect, useReducer } from 'react';
 
-import spinner from './assets/ajax-loader.gif';
-import { initialState, reducer } from './store/reducer';
-
-import Header from './components/Header';
+import './App.css';
+import Hero from './components/Hero';
 import Movie from './components/Movie';
 import Search from './components/Search';
-import './App.css';
+import { initialState, reducer } from './store/reducer';
 
 const MOVIE_API_URL = 'https://www.omdbapi.com/?s=man&apikey=9f2d1fd2';
 
@@ -45,15 +47,16 @@ const App = () => {
     );
   };
 
-  const refreshPage = () => {
-    window.location.reload();
-  };
-
   const { movies, errorMessage, loading } = state;
 
   const retrievedMovies =
     loading && !errorMessage ? (
-      <img className="spinner" src={spinner} alt="Loading spinner" />
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     ) : errorMessage ? (
       <div className="errorMessage">{errorMessage}</div>
     ) : (
@@ -64,15 +67,15 @@ const App = () => {
 
   return (
     <div className="App">
-      <div className="m-container">
-        <Header text="HOOKED" onRequestPage={refreshPage} />
-
+      <Hero>
         <Search search={search} />
+      </Hero>
 
-        <p className="App-intro">Sharing a few of our favourite movies</p>
-
-        <div className="movies">{retrievedMovies}</div>
-      </div>
+      <Container maxWidth="md">
+        <ImageList sx={{}} cols={4} gap={20}>
+          {retrievedMovies}
+        </ImageList>
+      </Container>
     </div>
   );
 };
